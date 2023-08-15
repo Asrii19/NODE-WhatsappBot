@@ -1,5 +1,7 @@
 const { Client, LocalAuth } = require("whatsapp-web.js");
-const commands = require("./commands/sticker");
+const config = require("./config");
+const cSticker = require("./commands/sticker");
+const cAudio = require("./commands/audio");
 const qrcode = require("qrcode-terminal");
 
 const session = ()=>{
@@ -26,18 +28,15 @@ const session = ()=>{
   });
 
   client.on("message", async (msg) => {
-    console.log("message", msg.body);
-    if (msg.body === "!sticker") {
-      let msgMedia = await commands.obtenerMedia(msg);
-      client.sendMessage(
-        msg.from,
-        msgMedia,
-        {
-          sendMediaAsSticker: true,
-          stickerAuthor: "Created By Shiro",
-          stickerName: "Ve nomás ya no somos duo imbecil",
-        }
-      );
+    console.log(msg.body);
+    if (msg.body.trim() === config.comandos.sticker) {
+      let msgMedia = await cSticker.obtenerMedia(msg);
+      client.sendMessage(msg.from,msgMedia,config.cfgSticker);
+    }else if(msg.body.trim().startsWith(config.comandos.audio)){
+      let msgAudio = await cAudio.obtenerAudio(msg);
+      client.sendMessage(msg.from,msgAudio);
+    }else{
+      client.sendMessage(msg.from,`Comando no encontrado, prueba **${config.comandos.help}** (en proceso...)`)
     }
   });
 

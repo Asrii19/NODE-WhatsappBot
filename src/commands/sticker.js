@@ -2,6 +2,7 @@ const { MessageMedia } = require("whatsapp-web.js");
 const fs = require("fs");
 const mime = require("mime-types");
 const path = require("path");
+
 const obtenerMedia = async (message) => {
   if (message.hasMedia) {
     try {
@@ -23,7 +24,6 @@ const obtenerMedia = async (message) => {
         });
 
         console.log("File downloaded successfully!", fullFilename);
-        console.log(fullFilename);
 
         const msgMedia = MessageMedia.fromFilePath(fullFilename);
         
