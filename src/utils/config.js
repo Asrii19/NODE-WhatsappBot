@@ -1,3 +1,21 @@
+// READY
+const msgChat = "Jordan de mierda deja de ser emo. Bot listo...";
+const nombreChat = "Logia No a las Locas De Mierda";
+// COMANDOS
+const prefix="!";
+const comandos={
+  sticker:`${prefix}sticker`,
+  audio:`${prefix}audio`,
+  help:`${prefix}help`,
+};
+// STICKER
+let banderaSticker = true;
+const cfgSticker={
+  sendMediaAsSticker: true,
+  stickerAuthor: "Hecho por mi alterEgo, Asri",
+  stickerName: "Ve nomás ya no somos duo imbecil",
+};
+// AUDIO
 const LANGUAGES = {
   af: "Afrikaans",
   sq: "Albanian",
@@ -42,19 +60,12 @@ const LANGUAGES = {
   vi: "Vietnamese",
   cy: "Welsh",
 };
-const prefix="!";
-const comandos={
-  sticker:`${prefix}sticker`,
-  audio:`${prefix}audio`,
-  help:`${prefix}help`,
-}
-const cfgSticker={
-  sendMediaAsSticker: true,
-  stickerAuthor: "Hecho por mi alterEgo",
-  stickerName: "Ve nomás ya no somos duo imbecil",
-};
 module.exports = {
     LANGUAGES,
     cfgSticker,
+    prefix,
     comandos,
-}
+    banderaSticker,
+    msgChat,
+    nombreChat,
+};

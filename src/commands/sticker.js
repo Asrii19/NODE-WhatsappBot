@@ -1,4 +1,5 @@
 const { MessageMedia } = require("whatsapp-web.js");
+const config = require("../utils/config");
 const fs = require("fs");
 const mime = require("mime-types");
 const path = require("path");
@@ -32,7 +33,7 @@ const obtenerMedia = async (message) => {
       }
     } catch (err) {
       console.log("Failed to save the file:", err);
-      console.log("File Deleted successfully!");
+      config.banderaSticker=false;
     }
   } else {
     message.reply("Envía una imagen con el comando *!sticker*");

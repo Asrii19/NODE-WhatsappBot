@@ -1,9 +1,8 @@
 const path = require("path");
 const gtts = require("node-gtts");
 const fs = require("fs");
-const config = require("../config");
+const config = require("../utils/config");
 const { MessageMedia } = require("whatsapp-web.js");
-const mediaPath = path.resolve(__dirname, "../download/audio.wav");
 
 const obtenerAudio = async (msg) => {
   try {
@@ -13,7 +12,7 @@ const obtenerAudio = async (msg) => {
     let contenido = aux.slice(2).trim();
 
     if (!lan || !contenido) {
-      return "Usa bien el comando, ejemplo: **!audio es Hola mundo**";
+      return "Usa el comando con el formato **!audio <idioma> <mensaje>**, ejemplo: **!audio es Hola mundo**";
     }
 
     const mediaPath = path.resolve(__dirname,`../download/audio_${Date.now()}.mp3`);
