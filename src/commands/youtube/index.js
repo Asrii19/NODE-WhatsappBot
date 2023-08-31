@@ -4,7 +4,8 @@ const fs = require("fs");
 const config = require("./config");
 const gmethods = require("../../utils/global_methods");
 const path = require("path");
-const { Console } = require("console");
+const downloader = require("./downloader");
+const searcher = require("./searcher");
 
 const obtenerModel = (parameter) => {
   let model;
@@ -20,7 +21,7 @@ const verificarDuracionVideo = async (url)=>{
   try {
     const info = await ytdl.getInfo(url);
     const duracionVideoSegundos = info.videoDetails.lengthSeconds;
-    if (duracionVideoSegundos <= config.caracteristicasMedia.duracionMaximaSegundo) return true; else return false;
+    if (duracionVideoSegundos <= config.duracionMedia.duracionMaximaSegundo) return true; else return false;
   }catch(err){
     console.log(err);
   }
@@ -30,48 +31,32 @@ const obtenerMedia = async (msg) => {
   const comando = config.command;
   const contentWithoutCommand = msg.body.slice(comando.length).trim();
   const { parameter, contenido } = gmethods.extractSingleParameter(contentWithoutCommand);
-  let model, msgMedia, media, url;
+  let model, msgMedia, media, url, fullPath;
 
+  // Obtengo el modelo de media pedido
   try {
     model = obtenerModel(parameter); //se obtiene el model dependiendo si es video u otro
+    fullPath = path.join(config.mediaPath, `/${model.filename}.mp4`); //primero se descarga el mp4
     if (model===config.yt_parameters.errorParameter) throw model;
   } catch (err) {
     return err;
   }
 
+  // Se obtiene el id del video pedido
   try {
-    url = contenido.trim(); //se obtiene el id
+    if (gmethods.esEnlace(contenido)) url=contenido.trim(); 
+    else url = await searcher.obtenerEnlacePrimerVideo(contenido);
   } catch (err) {
-    console.log(err);
+    return err;
   }
-  let fullPath = path.join(config.mediaPath, `/${model.filename}.mp4`); //primero se descarga el mp47
   
+  // Se verifica la disponibilidad en cuanto duracion
   const disponibilidad = await verificarDuracionVideo(url);
-  if (!disponibilidad) return config.caracteristicasMedia.errorDuracion;
+  if (!disponibilidad) return config.duracionMedia.errorDuracion;
   
+  // Se descarga el media
+  [media,fullPath] = await downloader.download(url,model,fullPath);
   
-  try {
-    const stream = ytdl(url, { filter: "audioandvideo" });
-    const downloadEnd = new Promise((resolve, reject) => {
-      stream
-        .pipe(fs.createWriteStream(fullPath))
-        .on("finish", () => resolve())
-        .on("error", (error) => reject(error));
-    });
-    await downloadEnd;
-
-    if (!downloadEnd) {
-      // oh no i can't download this shit
-    }
-    if (model.name != "video") {
-      [media, fullPath] = await model.converter(fullPath);
-      console.log(fullPath);
-    } else {
-      media = fullPath;
-    }
-  } catch (err) {
-    console.error("An error occurred:", err.message);
-  }
   msgMedia = MessageMedia.fromFilePath(media);
   fs.unlinkSync(fullPath);
   return msgMedia;

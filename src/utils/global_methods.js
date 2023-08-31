@@ -22,7 +22,13 @@ const extractSingleParameter = (inputString) => {
   }
 }
 
+function esEnlace(cadena) {
+  const expresionRegularEnlace = /^(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})(\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*)?$/;
+  return expresionRegularEnlace.test(cadena);
+}
+
 module.exports = {
-    extractParameters,
-    extractSingleParameter
+  esEnlace,
+  extractParameters,
+  extractSingleParameter
 }

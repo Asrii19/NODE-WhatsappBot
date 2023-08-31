@@ -1,9 +1,9 @@
-const converter = require("./downloader/converter");
+const converter = require("./converter");
 const config = require("../../utils/config");
 const command = config.comandos.yt;
 const mediaPath = config.mediaPath;
 
-const caracteristicas = {
+const modelos = {
   audio: {
     name:"audio",
     filename: `audio_${Date.now()}`,
@@ -17,20 +17,21 @@ const caracteristicas = {
   },
 };
 let yt_parameters = {
-  a: caracteristicas.audio,
-  audio: caracteristicas.audio,
-  v: caracteristicas.video,
-  video: caracteristicas.video,
+  a: modelos.audio,
+  audio: modelos.audio,
+  v: modelos.video,
+  video: modelos.video,
   errorParameter: "Parámetro no encontrado, escriba *-v* antes del link para elegir el *modo video*.",
 };
-const caracteristicasMedia ={
-  duracionMaximaSegundo:540,
-  errorDuracion:"Duración límite excedido, el video *no debe durar más de 10 minutos*.",
+const duracionMedia ={
+  duracionMaximaSegundo:600,
+  errorDuracion: `Duración límite excedido, el video no debe durar más de *${duracionMedia.duracionMaximaSegundo/60} minutos*.`,
 }
+
 module.exports = {
   yt_parameters,
   command,
-  caracteristicas,
+  modelos,
   mediaPath,
-  caracteristicasMedia,
+  duracionMedia,
 }
