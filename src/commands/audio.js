@@ -7,26 +7,29 @@ const { MessageMedia } = require("whatsapp-web.js");
 const obtenerAudio = async (msg) => {
   try {
     const comando = config.comandos.audio;
-    const aux = msg.body.slice(comando.length).trim();
-    const lan = aux.slice(0, 2).trim();
-    let contenido = aux.slice(2).trim();
-
-    if (!lan || !contenido) {
-      return "Usa el comando con el formato **!audio <idioma> <mensaje>**, ejemplo: **!audio es Hola mundo**";
+    const contenido = msg.body.slice(comando.length).trim();
+    let lan = "es";
+    let texto;
+    // si nos brinda idioma lo separa en 3
+    if(contenido.startsWith("-")){
+      lan = contenido.slice(1, 3).trim(); //guarda el idioma
+      if(lan in config.LANGUAGES){
+        texto = contenido.slice(3).trim(); //guarda el texto
+      }else{
+        return "Idioma *no* encontrado!";
+      }
+    }else{ // caso contrario en 2
+      texto = contenido;
+      if(!texto){
+        return "Usa el comando con el formato *!audio <mensaje>* o *!audio -<idioma> <mensaje>*, ejemplo: *!audio -es Hola mundo*";
+      }
     }
-
-    const mediaPath = path.resolve(__dirname,`../download/audio_${Date.now()}.mp3`);
-    let tts;
-    try {
-      tts = gtts(lan);
-    } catch (err) {
-      tts = gtts("es");
-      contenido=aux;
-    }
+    const fullPath = path.resolve(config.mediaPath,`/audio_${Date.now()}.mp3`);
+    let tts = gtts(lan);
 
     return new Promise((resolve, reject) => {
       // Crear una nueva instancia de Promise y proporcionar dos funciones de control: resolve y reject.
-      tts.save(mediaPath, contenido, (err) => {
+      tts.save(fullPath, texto, (err) => {
         // Llamar al método save de la instancia tts (que representa gtts) para generar el archivo de audio.
         // El tercer argumento es una función de devolución de llamada que se ejecutará cuando se complete o falle la generación.
         if (err) {
@@ -37,9 +40,9 @@ const obtenerAudio = async (msg) => {
           // Utilizar reject para rechazar la promesa con un mensaje de error.
         }
         // Si no hay errores...
-        const msgMedia = MessageMedia.fromFilePath(mediaPath);
+        const msgMedia = MessageMedia.fromFilePath(fullPath);
         // Crear un objeto MessageMedia a partir del archivo de audio generado.
-        fs.unlinkSync(mediaPath);
+        fs.unlinkSync(fullPath);
         // Eliminar el archivo de audio, ya que no se necesita después de ser enviado.
         resolve(msgMedia);
         // Utilizar resolve para resolver la promesa con el objeto MessageMedia generado.

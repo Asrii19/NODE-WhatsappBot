@@ -1,13 +1,18 @@
+const path = require("path");
+
 // READY
 const msgChat = "Jordan de mierda deja de ser emo. Bot listo...";
 const nombreChat = "Logia No a las Locas De Mierda";
 // COMANDOS
-const prefix="!";
+const prefix="$";
 const comandos={
   sticker:`${prefix}sticker`,
   audio:`${prefix}audio`,
   help:`${prefix}help`,
+  yt:`${prefix}yt`,
 };
+// MEDIA PATH
+mediaPath = path.resolve(__dirname, "../../download/");
 // STICKER
 let banderaSticker = true;
 const cfgSticker={
@@ -68,4 +73,5 @@ module.exports = {
     banderaSticker,
     msgChat,
     nombreChat,
+    mediaPath,
 };

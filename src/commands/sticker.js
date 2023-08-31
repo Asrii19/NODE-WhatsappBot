@@ -9,26 +9,26 @@ const obtenerMedia = async (message) => {
     try {
       const media = await message.downloadMedia();
       if (media) {
-        const mediaPath = path.resolve(__dirname, "../download/");
+        const mediaPath = config.mediaPath;
 
         if (!fs.existsSync(mediaPath)) {
           fs.mkdirSync(mediaPath);
         }
 
         const extension = mime.extension(media.mimetype);
-        const filename = new Date().getTime();
-        const fullFilename = path.join(mediaPath, `${filename}.${extension}`);
+        const filename = Date.now();
+        const fullPath = path.join(mediaPath, `${filename}.${extension}`);
 
         // Guarda el archivo
-        fs.writeFileSync(fullFilename, media.data, {
+        fs.writeFileSync(fullPath, media.data, {
           encoding: "base64",
         });
 
-        console.log("File downloaded successfully!", fullFilename);
+        console.log("File downloaded successfully!", fullPath);
 
-        const msgMedia = MessageMedia.fromFilePath(fullFilename);
+        const msgMedia = MessageMedia.fromFilePath(fullPath);
         
-        fs.unlinkSync(fullFilename);
+        fs.unlinkSync(fullPath);
         return msgMedia;
       }
     } catch (err) {
