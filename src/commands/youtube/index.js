@@ -9,14 +9,12 @@ const searcher = require("./searcher");
 
 const obtenerModel = (parameter) => {
   let model;
-  !parameter
-    ? (parameter = "video")
-    : null;
-  parameter in config.yt_parameters
-    ? (model = config.yt_parameters[parameter])
-    : (model = config.yt_parameters.errorParameter);
+  parameter = parameter || "video";
+  // Crear el model dependiendo del parametro que tenga
+  model = config.yt_parameters[parameter];
   return model;
 };
+
 const verificarDuracionVideo = async (url)=>{
   try {
     const info = await ytdl.getInfo(url);
@@ -33,13 +31,14 @@ const obtenerMedia = async (msg) => {
   const { parameter, contenido } = gmethods.extractSingleParameter(contentWithoutCommand);
   let model, msgMedia, media, url, fullPath;
 
-  // Obtengo el modelo de media pedido
-  try {
+  try{
+    // Se obtiene el modelo (video, audio)
     model = obtenerModel(parameter); //se obtiene el model dependiendo si es video u otro
     fullPath = path.join(config.mediaPath, `/${model.filename}.mp4`); //primero se descarga el mp4
-    if (model===config.yt_parameters.errorParameter) throw model;
-  } catch (err) {
-    return err;
+    if (model===config.errores.errorParameter) throw model;
+  }catch(err){
+    console.log("Error: ", err);
+    return config.errores.errorCatch;
   }
 
   // Se obtiene el id del video pedido
@@ -52,7 +51,7 @@ const obtenerMedia = async (msg) => {
   
   // Se verifica la disponibilidad en cuanto duracion
   const disponibilidad = await verificarDuracionVideo(url);
-  if (!disponibilidad) return config.duracionMedia.errorDuracion;
+  if (!disponibilidad) return config.errores.errorDuracion;
   
   // Se descarga el media
   [media,fullPath] = await downloader.download(url,model,fullPath);
