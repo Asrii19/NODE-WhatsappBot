@@ -3,6 +3,7 @@ const ytSearch = require('yt-search');
 // Función para buscar y obtener el enlace del primer video
 async function obtenerEnlacePrimerVideo(palabraClave) {
   try {
+    console.log(palabraClave);
     const resultadoBusqueda = await ytSearch(palabraClave);
     
     if (resultadoBusqueda.videos.length > 0) {

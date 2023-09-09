@@ -1,15 +1,17 @@
 const config = require("../../utils/config");
 const command = config.comandos.yt;
-const mediaPath = config.mediaPath;
 
 const Audio = require("./models/audio");
 const Video = require("./models/video");
 
-let yt_parameters = {
-  a: new Audio(),
-  audio: new Audio(),
-  v: new Video(),
-  video: new Video(),
+const yt_parameters = (parameter)=>{
+  switch (parameter){
+    case "a": return new Audio();
+    case "audio": return new Audio();
+    case "v": return new Video();
+    case "video": return new Video();
+    default: throw new Error("errorParameter");
+  }
 };
 const duracionMedia ={
   duracionMaximaSegundo:600,
@@ -23,7 +25,6 @@ const errores = {
 module.exports = {
   yt_parameters,
   command,
-  mediaPath,
   duracionMedia,
   errores,
 }
