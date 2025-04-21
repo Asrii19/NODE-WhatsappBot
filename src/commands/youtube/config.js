@@ -14,7 +14,7 @@ const yt_parameters = (parameter)=>{
   }
 };
 const duracionMedia ={
-  duracionMaximaSegundo:600,
+  duracionMaximaSegundo:900,
 }
 const errores = {
   errorDuracion: `Duración límite excedido, el video no debe durar más de *${duracionMedia.duracionMaximaSegundo/60} minutos*.`,

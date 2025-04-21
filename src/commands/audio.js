@@ -6,6 +6,7 @@ const { MessageMedia } = require("whatsapp-web.js");
 
 const obtenerAudio = async (msg) => {
   try {
+    console.log("+audio")
     const comando = config.comandos.audio;
     const contenido = msg.body.slice(comando.length).trim();
     let lan = "es";
@@ -24,9 +25,11 @@ const obtenerAudio = async (msg) => {
         return "Usa el comando con el formato *!audio <mensaje>* o *!audio -<idioma> <mensaje>*, ejemplo: *!audio -es Hola mundo*";
       }
     }
-    const fullPath = path.resolve(config.mediaPath,`/audio_${Date.now()}.mp3`);
+    const fullPath = path.resolve(config.mediaPath,`audio_${Date.now()}.mp3`);
+    console.log("path: ",fullPath)
     let tts = gtts(lan);
-
+    
+    console.log("-audio")
     return new Promise((resolve, reject) => {
       // Crear una nueva instancia de Promise y proporcionar dos funciones de control: resolve y reject.
       tts.save(fullPath, texto, (err) => {

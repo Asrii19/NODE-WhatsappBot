@@ -38,7 +38,16 @@ const session = () => {
       config.banderaSticker ? client.sendMessage(msg.from, msgMedia, config.cfgSticker): null;
     } else if (msg.body.trim().startsWith(config.comandos.audio)) {
       let msgAudio = await cAudio.obtenerAudio(msg);
-      client.sendMessage(msg.from, msgAudio);
+      
+      const fileSizeInBytes = Math.floor((msgAudio.data.length * 3) / 4);
+      msgAudio.filesize = fileSizeInBytes;
+      
+      console.log("msgAudio: ", msgAudio);
+      console.log(msg.from);
+      await client.sendMessage(msg.from, msgAudio,{
+        sendAudioAsVoice: false, // si querés que se escuche como audio normal
+      });
+      console.log("audio enviado");
     } else if (msg.body.trim().startsWith(config.comandos.yt)) {
       let msgYt = await cYt.obtenerMedia(msg);
       client.sendMessage(msg.from,msgYt); 

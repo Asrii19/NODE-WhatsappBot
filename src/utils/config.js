@@ -18,7 +18,7 @@ let banderaSticker = true;
 const cfgSticker={
   sendMediaAsSticker: true,
   stickerAuthor: "Hecho por mi alterEgo, Asri",
-  stickerName: "Ve nomás ya no somos duo imbecil",
+  stickerName: "Chapa puto",
 };
 // AUDIO
 const LANGUAGES = {
