@@ -1,4 +1,4 @@
-const ytSearch = require('yt-search');
+import ytSearch from 'yt-search';
 
 // Función para buscar y obtener el enlace del primer video
 async function obtenerEnlacePrimerVideo(palabraClave) {
@@ -18,6 +18,6 @@ async function obtenerEnlacePrimerVideo(palabraClave) {
   }
 }
 
-module.exports = {
+export {
     obtenerEnlacePrimerVideo,
 }

@@ -1,31 +1,33 @@
-const ytdl = require("ytdl-core");
-const { MessageMedia } = require("whatsapp-web.js");
-const fs = require("fs");
-const config = require("./config");
-const gmethods = require("../../utils/global_methods");
-const downloader = require("./downloader");
-const searcher = require("./searcher");
+import whatsapp from "whatsapp-web.js";
+const { MessageMedia } = whatsapp;
+import ytdl from '@distube/ytdl-core';
+const { getInfo } = ytdl;
+import { unlinkSync } from "fs";
+import { yt_parameters, duracionMedia, command, errores } from "./config.js";
+import { esEnlace, extractSingleParameter } from "../../utils/global_methods.js";
+import { download } from "./downloader/index.js";
+import { obtenerEnlacePrimerVideo } from "./searcher.js";
 
 const obtenerModel = (parameter) => {
   let model;
   parameter = parameter || "video";
-  model = config.yt_parameters(parameter); // Crear el model dependiendo del parametro que tenga
+  model = yt_parameters(parameter); // Crear el model dependiendo del parametro que tenga
   return model;
 };
 const obtenerUrl = async (contenido) =>{
-  if (gmethods.esEnlace(contenido)) return contenido.trim(); 
-  else return await searcher.obtenerEnlacePrimerVideo(contenido);
+  if (esEnlace(contenido)) return contenido.trim(); 
+  else return await obtenerEnlacePrimerVideo(contenido);
 }
 const verificarDuracionVideo = async (url)=>{
-  const info = await ytdl.getInfo(url);
+  const info = await getInfo(url);
   const duracionVideoSegundos = info.videoDetails.lengthSeconds;
-  if (!(duracionVideoSegundos <= config.duracionMedia.duracionMaximaSegundo)) throw new Error("errorDuracion");
+  if (!(duracionVideoSegundos <= duracionMedia.duracionMaximaSegundo)) throw new Error("errorDuracion");
 }
 const obtenerMedia = async (msg) => {
   // Obtener información del comando (parametros y url)
-  const comando = config.command;
+  const comando = command;
   const contentWithoutCommand = msg.body.slice(comando.length).trim();
-  const { parameter, contenido } = gmethods.extractSingleParameter(contentWithoutCommand);
+  const { parameter, contenido } = extractSingleParameter(contentWithoutCommand);
   let model, msgMedia, media, url;
 
   try{
@@ -33,20 +35,20 @@ const obtenerMedia = async (msg) => {
     url = await obtenerUrl(contenido); // Se obtiene el url del video pedido
     await verificarDuracionVideo(url); // Se verifica la disponibilidad en cuanto duracion
     
-    [media,model.fullPath] = await downloader.download(url,model,model.fullPath); // Se descarga el media
+    [media,model.fullPath] = await download(url,model,model.fullPath); // Se descarga el media
     msgMedia = MessageMedia.fromFilePath(media);
-    fs.unlinkSync(model.fullPath);
+    unlinkSync(model.fullPath);
     return msgMedia;
   }catch(err){
-    if(config.errores[err.message]){
-      return config.errores[err.message];
+    if(errores[err.message]){
+      return errores[err.message];
     } else {
       console.log(err);
-      return config.errores.errorCatch; // Mensaje por defecto
+      return errores.errorCatch; // Mensaje por defecto
     }
   }
 };
 
-module.exports = {
+export {
   obtenerMedia,
 };

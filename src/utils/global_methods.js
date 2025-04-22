@@ -27,8 +27,8 @@ function esEnlace(cadena) {
   return expresionRegularEnlace.test(cadena);
 }
 
-module.exports = {
+export { 
   esEnlace,
   extractParameters,
-  extractSingleParameter
-}
+  extractSingleParameter 
+};

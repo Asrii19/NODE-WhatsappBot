@@ -1,9 +1,8 @@
-const config = require("../../utils/config");
+import * as config from "../../utils/config.js";
+import Audio from "./models/audio.js";
+import Video from "./models/video.js";
+
 const command = config.comandos.yt;
-
-const Audio = require("./models/audio");
-const Video = require("./models/video");
-
 const yt_parameters = (parameter)=>{
   switch (parameter){
     case "a": return new Audio();
@@ -22,7 +21,7 @@ const errores = {
   errorCatch: "Oops, hubo un problema. Trataré de solucionarlo ahora^-^.",
 }
 
-module.exports = {
+export {
   yt_parameters,
   command,
   duracionMedia,

@@ -1,10 +1,12 @@
-const { Client, LocalAuth } = require("whatsapp-web.js");
-const config = require("./utils/config");
-const ready = require("./utils/ready");
-const cSticker = require("./commands/sticker");
-const cAudio = require("./commands/audio");
-const cYt = require("./commands/youtube");
-const qrcode = require("qrcode-terminal");
+import whatsapp from "whatsapp-web.js";
+const { Client, LocalAuth } = whatsapp;
+import qr from "qrcode-terminal";
+const { generate } = qr;
+import { comandos, banderaSticker, cfgSticker, prefix } from "./utils/config.js";
+import ready from "./utils/ready.js";
+import { obtenerMedia as getSticker } from "./commands/sticker.js";
+import { obtenerAudio } from "./commands/audio.js";
+import { obtenerMedia as getMediaYT } from "./commands/youtube/index.js";
 
 const session = () => {
   const client = new Client({
@@ -21,7 +23,7 @@ const session = () => {
       }
   });
   client.on("qr", (qr) => {
-    qrcode.generate(qr, { small: true });
+    generate(qr, { small: true });
   });
 
   client.on("authenticated", (session) => {
@@ -33,36 +35,29 @@ const session = () => {
   });
   client.on("message", async (msg) => {
     console.log(msg.body);
-    if (msg.body.trim() === config.comandos.sticker) {
-      let msgMedia = await cSticker.obtenerMedia(msg);
-      config.banderaSticker ? client.sendMessage(msg.from, msgMedia, config.cfgSticker): null;
-    } else if (msg.body.trim().startsWith(config.comandos.audio)) {
-      let msgAudio = await cAudio.obtenerAudio(msg);
-      
-      const fileSizeInBytes = Math.floor((msgAudio.data.length * 3) / 4);
-      msgAudio.filesize = fileSizeInBytes;
-      
-      console.log("msgAudio: ", msgAudio);
-      console.log(msg.from);
+    if (msg.body.trim() === comandos.sticker) {
+      let msgMedia = await getSticker(msg);
+      banderaSticker ? client.sendMessage(msg.from, msgMedia, cfgSticker): null;
+    } else if (msg.body.trim().startsWith(comandos.audio)) {
+      let msgAudio = await obtenerAudio(msg);
       await client.sendMessage(msg.from, msgAudio,{
-        sendAudioAsVoice: false, // si querés que se escuche como audio normal
+        sendAudioAsVoice: true,
       });
-      console.log("audio enviado");
-    } else if (msg.body.trim().startsWith(config.comandos.yt)) {
-      let msgYt = await cYt.obtenerMedia(msg);
+    } else if (msg.body.trim().startsWith(comandos.yt)) {
+      let msgYt = await getMediaYT(msg);
       client.sendMessage(msg.from,msgYt); 
     } else if (
-      !(msg.body.trim() in config.comandos) &&
-      msg.body.trim().startsWith(config.prefix)
+      !(msg.body.trim() in comandos) &&
+      msg.body.trim().startsWith(prefix)
     ) {
       client.sendMessage(
         msg.from,
-        `Comando no encontrado, prueba **${config.comandos.help}** (en proceso...)`
+        `Comando no encontrado, prueba **${comandos.help}** (en proceso...)`
       );
     }
   });
   client.on("ready", () => {
-    //ready.mensajeReady(client);
+    // ready.mensajeReady(client);
     console.log("ready");
   });
   client.on("disconnected", (reason) => {
@@ -71,6 +66,6 @@ const session = () => {
   return client;
 };
 
-module.exports = {
+export {
   session,
 };

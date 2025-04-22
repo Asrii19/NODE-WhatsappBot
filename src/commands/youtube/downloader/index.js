@@ -1,13 +1,13 @@
-const fs = require("fs");
-const ytdl = require("ytdl-core");
+import { createWriteStream } from "fs";
+import ytdl from '@distube/ytdl-core';
 
-const download = async (url,model,fullPath) => {
+export const download = async (url,model,fullPath) => {
   try {
     let media, mediaPath=fullPath;
     const stream = ytdl(url, { filter: "audioandvideo" });
     const downloadEnd = new Promise((resolve, reject) => {
       stream
-        .pipe(fs.createWriteStream(fullPath))
+        .pipe(createWriteStream(fullPath))
         .on("finish", () => resolve())
         .on("error", (error) => reject(error));
     });
@@ -23,8 +23,4 @@ const download = async (url,model,fullPath) => {
   } catch (err) {
     console.error("An error occurred:", err.message);
   }
-};
-
-module.exports = {
-  download,
 };

@@ -1,8 +1,11 @@
-const path = require("path");
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // READY
-const msgChat = "Jordan de mierda deja de ser emo. Bot listo...";
-const nombreChat = "Logia No a las Locas De Mierda";
+const msgChat = "Chapa ogt, no saques tu Badang. Bot listo...";
+const nombreChat = "Paltas de la Ley 🥑";
 // COMANDOS
 const prefix="$";
 const comandos={
@@ -12,7 +15,7 @@ const comandos={
   yt:`${prefix}yt`,
 };
 // MEDIA PATH
-mediaPath = path.resolve(__dirname, "../../download/");
+const mediaPath = resolve(__dirname, "../../download/");
 // STICKER
 let banderaSticker = true;
 const cfgSticker={
@@ -65,7 +68,7 @@ const LANGUAGES = {
   vi: "Vietnamese",
   cy: "Welsh",
 };
-module.exports = {
+export {
     LANGUAGES,
     cfgSticker,
     prefix,

@@ -6,4 +6,4 @@ class Media {
     this.fullPath = fullPath;
   }
 }
-module.exports = Media;
+export default Media;
